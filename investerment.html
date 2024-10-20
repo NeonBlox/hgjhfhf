@@ -53,7 +53,7 @@
         </div>
         <div class="bg-white rounded p-4 shadow-md">
           <h3 class="text-xl font-semibold">Custom Amount</h3>
-          <input type="number" id="customAmount" class="border rounded w-full px-2 py-1 mb-4" placeholder="Enter your amount in cents" />
+          <input id="customAmount" type="number" class="mt-4 w-full px-4 py-2 border rounded" placeholder="Enter your amount" />
           <button class="mt-4 w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition" onclick="buyCustomAmount()">
             Buy Custom Amount
           </button>
@@ -95,12 +95,9 @@
     }
 
     function buyCustomAmount() {
-      const customAmount = document.getElementById('customAmount').value;
-      if (!customAmount || customAmount <= 0) {
-        alert('Please enter a valid amount!');
-        return;
-      }
-      buyProduct('Custom Amount', parseInt(customAmount)); // Convert to an integer
+      const amountInput = document.getElementById('customAmount').value;
+      const amountInCents = amountInput * 100; // Convert dollars to cents
+      buyProduct('Custom Amount', amountInCents);
     }
   </script>
 </body>
