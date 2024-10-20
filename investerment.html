@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://js.stripe.com/v3/"></script>
+  <title>Investerment Page</title>
+  <style>
+    body {
+      background: linear-gradient(to right, #00c6ff, #0072ff);
+      font-family: 'Arial', sans-serif;
+    }
+  </style>
+</head>
+<body class="flex flex-col min-h-screen">
+  <nav class="bg-white shadow-md p-4 fixed w-full z-10">
+    <ul class="flex space-x-6 justify-center">
+      <li><a href="index.html" class="text-blue-600 hover:underline">Home</a></li>
+      <li><a href="#about" class="text-blue-600 hover:underline">About</a></li>
+      <li><a href="investerment.html" class="text-blue-600 hover:underline">Investerment</a></li>
+      <li><a href="#contact" class="text-blue-600 hover:underline">Contact</a></li>
+    </ul>
+  </nav>
+
+  <main class="flex-grow pt-20">
+    <section id="investerment" class="py-20 bg-gray-100">
+      <h2 class="text-4xl font-bold text-center mb-6">Investerment Page</h2>
+      <p class="text-center mb-8 max-w-2xl mx-auto px-4">
+        Welcome to the Investerment page! Here you can buy amazing products that enhance your experience.
+      </p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
+        <div class="bg-white rounded p-4 shadow-md">
+          <h3 class="text-xl font-semibold">Product 1</h3>
+          <p class="text-gray-600 mb-4">Description of Product 1.</p>
+          <button class="mt-4 w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition" onclick="buyProduct('Product 1', 5000)">
+            Buy for $50
+          </button>
+        </div>
+        <div class="bg-white rounded p-4 shadow-md">
+          <h3 class="text-xl font-semibold">Product 2</h3>
+          <p class="text-gray-600 mb-4">Description of Product 2.</p>
+          <button class="mt-4 w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition" onclick="buyProduct('Product 2', 7500)">
+            Buy for $75
+          </button>
+        </div>
+        <div class="bg-white rounded p-4 shadow-md">
+          <h3 class="text-xl font-semibold">Product 3</h3>
+          <p class="text-gray-600 mb-4">Description of Product 3.</p>
+          <button class="mt-4 w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition" onclick="buyProduct('Product 3', 10000)">
+            Buy for $100
+          </button>
+        </div>
+        <div class="bg-white rounded p-4 shadow-md">
+          <h3 class="text-xl font-semibold">Custom Amount</h3>
+          <p class="text-gray-600 mb-4">Enter a custom amount to give.</p>
+          <input type="number" placeholder="Enter custom amount" id="customAmount" class="border rounded p-2 mb-2 w-full" />
+          <button class="mt-4 w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition" onclick="buyCustomAmount()">
+            Buy for Custom Amount
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-white text-center p-4 shadow-md">
+    <p class="text-gray-600">&copy; 2024 Emilian. All rights reserved.</p>
+  </footer>
+
+  <script>
+    const stripe = Stripe('pk_live_51QC1xGP5n8kY1pfyngJejdR3eLodimlmOWYzsenNtx30H4NGDdqG63nlLHh7id8jvbRL3s8361rp5RfO9lAsh7j2004gpNi2Pc'); // Replace with your Stripe public key
+
+    function buyProduct(productName, amount) {
+      fetch('/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ productName, amount }),
+      })
+      .then((response) => {
+        if (response.ok) return response.json();
+        return Promise.reject(response);
+      })
+      .then((data) => {
+        return stripe.redirectToCheckout({ sessionId: data.id });
+      })
+      .then((result) => {
+        if (result.error) {
+          alert(result.error.message);
+        }
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+    }
+
+    function buyCustomAmount() {
+      const customAmount = document.getElementById('customAmount').value;
+      const amount = parseInt(customAmount) * 100; // Convert to cents
+      if (isNaN(amount) || amount <= 0) {
+        alert("Please enter a valid amount.");
+        return;
+      }
+
+      fetch('/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ productName: 'Custom Amount', amount }),
+      })
+      .then((response) => {
+        if (response.ok) return response.json();
+        return Promise.reject(response);
+      })
+      .then((data) => {
+        return stripe.redirectToCheckout({ sessionId: data.id });
+      })
+      .then((result) => {
+        if (result.error) {
+          alert(result.error.message);
+        }
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+    }
+  </script>
+</body>
+</html>
