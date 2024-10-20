@@ -53,10 +53,9 @@
         </div>
         <div class="bg-white rounded p-4 shadow-md">
           <h3 class="text-xl font-semibold">Custom Amount</h3>
-          <p class="text-gray-600 mb-4">Enter a custom amount to give.</p>
-          <input type="number" placeholder="Enter custom amount" id="customAmount" class="border rounded p-2 mb-2 w-full" />
+          <input type="number" id="customAmount" class="border rounded w-full px-2 py-1 mb-4" placeholder="Enter your amount in cents" />
           <button class="mt-4 w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition" onclick="buyCustomAmount()">
-            Buy for Custom Amount
+            Buy Custom Amount
           </button>
         </div>
       </div>
@@ -97,34 +96,11 @@
 
     function buyCustomAmount() {
       const customAmount = document.getElementById('customAmount').value;
-      const amount = parseInt(customAmount) * 100; // Convert to cents
-      if (isNaN(amount) || amount <= 0) {
-        alert("Please enter a valid amount.");
+      if (!customAmount || customAmount <= 0) {
+        alert('Please enter a valid amount!');
         return;
       }
-
-      fetch('/create-checkout-session', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ productName: 'Custom Amount', amount }),
-      })
-      .then((response) => {
-        if (response.ok) return response.json();
-        return Promise.reject(response);
-      })
-      .then((data) => {
-        return stripe.redirectToCheckout({ sessionId: data.id });
-      })
-      .then((result) => {
-        if (result.error) {
-          alert(result.error.message);
-        }
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
+      buyProduct('Custom Amount', parseInt(customAmount)); // Convert to an integer
     }
   </script>
 </body>
