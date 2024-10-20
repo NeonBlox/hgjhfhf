@@ -5,9 +5,7 @@ const path = require('path');
 
 const app = express();
 app.use(bodyParser.json());
-
-// Serve static files directly from the root directory
-app.use(express.static(__dirname)); // Serve static files from the root directory
+app.use(express.static('.')); // Serve static files from the root directory
 
 // Serve cancel and success pages
 app.get('/cancel.html', (req, res) => {
@@ -37,8 +35,8 @@ app.post('/create-checkout-session', async (req, res) => {
             },
         ],
         mode: 'payment',
-        success_url: 'http://localhost:4000/success.html', // Redirect to success page
-        cancel_url: 'http://localhost:4000/cancel.html',   // Redirect to cancel page
+        success_url: 'https://www.downtown-investerment.com/success.html', // Redirect to success page
+        cancel_url: 'https://www.downtown-investerment.com/cancel.html',   // Redirect to cancel page
     });
 
     res.json({ id: session.id });
